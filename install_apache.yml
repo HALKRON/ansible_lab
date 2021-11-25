@@ -1,0 +1,20 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install apache2 package
+    dnf:
+      name: httpd
+
+  - name: boot up apache server
+    ansible.builtin.systemd:
+      state: started
+      name: httpd
+  
+  - name: permit http traffic
+    ansible.posix.firewalld:
+      service: http
+      permanent: yes
+      state: enabled
