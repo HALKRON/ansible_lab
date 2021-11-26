@@ -1,0 +1,53 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+  
+  - name: Install updates (CentOS)
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: Install updates (Amazon)
+    yum:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "Amazon"
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: Install apache and php (Amazon)
+    yum:
+      name:
+        - httpd
+        - php
+      state: latest
+    when: ansible_distribution == "Amazon"
+
+  - name: Install apache and php (CentOS)
+    dnf:
+      name:
+        - httpd
+        - php
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+  - name: Install MariaDB package (CentOS)
+    dnf:
+      name: mariadb
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+  - name: Install MariaDB package (Amazon)
+    yum:
+      name: mariadb
+      state: latest
+    when: ansible_distribution == "Amazon"
