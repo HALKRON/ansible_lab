@@ -4,9 +4,27 @@
   become: true
   tasks:
 
-  - name: install apache2 package
+  - name: Update CentOS repos
+    dnf:
+      update_cache: yes
+    when: ansible_distribution == "Centos"
+
+  - name: Update AWS Linux repos
+    yum:
+      update_cache: yes
+    when: ansible_distribution == "Amazon"
+  
+  - name: Install apache2 package on CentOS
     dnf:
       name: httpd
+      state: latest
+    when: ansible_distribution == "Centos"
+
+  - name: Install apache2 package on AWS Linux
+    yum:
+      name: httpd
+      state: latest
+    when: ansible_distribution == "Amazon"
 
   - name: boot up apache server
     ansible.builtin.systemd:
