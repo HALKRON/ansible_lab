@@ -4,19 +4,25 @@
   become: true
   pre_tasks:
   
-  - name: Install updates (Amazon)
+  - name: Update repo (Amazon)
     tags: always
     yum:
-      update_only: yes
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Amazon"
 
-  - name: Install updates (Ubuntu)
+  - name: Update repo (Ubuntu)
     tags: always
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Ubuntu"
+
+  - name: Add SSH Key for Simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCLeB4sIJOAmToX1MEOosb+fFtey7WPzJo/d3yDdjl1c45CaZoIjF5jTg1GzXfFUgY2QwjVJ9PxIEc0aB4aMG+sCCVjuYNf8X6xyZxUHoSVrwaeXEIlBBVyCUtRPwQvmfZN87F1P2gIkfCL2eywaL+bai1+3Ier0HIW2+RDO5zO3CgkOyxKuz8MnMvuCU18ougBIpGJVXLZNkCQEnUAT5GqUBAf73w7j5xz7WdOZmYpoE2zUDvQUuTQ1yXioI/Su522W02iiY7F9noG3DK7EeLO+h5sHRJagz/3OZ3QVq4LD7x9m4Sbdh9kepOMj1ml1QZl9yJw6ETTiv2QOEbfy64j"
 
 - hosts: workstations
   become: true
