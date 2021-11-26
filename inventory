@@ -7,3 +7,6 @@
 
 [file_servers]
 13.214.142.252 ansible_user=ubuntu
+
+[workstations]
+18.141.166.24 ansible_user=ec2-user
