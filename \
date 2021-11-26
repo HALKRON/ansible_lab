@@ -1,7 +1,0 @@
-[web_servers]
-ec2-18-141-166-24.ap-southeast-1.compute.amazonaws.com
-ec2-13-212-18-168.ap-southeast-1.compute.amazonaws.com
-
-[db_servers]
-ec2-13-214-134-241.ap-southeast-1.compute.amazonaws.com
-ec2-18-140-117-138.ap-southeast-1.compute.amazonaws.com
