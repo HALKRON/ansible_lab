@@ -1,5 +1,9 @@
 [web_servers]
-10.0.1.100
+18.141.166.24 ansible_user=ec2-user
+13.212.18.168 ansible_user=ubuntu
 
 [db_servers]
-10.0.1.101
+13.214.134.241 ansible_user=ec2-user
+
+[file_servers]
+13.214.142.252 ansible_user=ubuntu

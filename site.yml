@@ -4,23 +4,26 @@
   become: true
   pre_tasks:
   
-  - name: Install updates (CentOS)
-    dnf:
-      update_only: yes
-      update_cache: yes
-    when: ansible_distribution == "CentOS"
-
   - name: Install updates (Amazon)
+    tags: always
     yum:
       update_only: yes
       update_cache: yes
     when: ansible_distribution == "Amazon"
+
+  - name: Install updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
 
 - hosts: web_servers
   become: true
   tasks:
 
-  - name: Install apache and php (Amazon)
+  - name: Install Apache and PHP (Amazon)
+    tags: apache,apache2,amazon
     yum:
       name:
         - httpd
@@ -28,26 +31,39 @@
       state: latest
     when: ansible_distribution == "Amazon"
 
-  - name: Install apache and php (CentOS)
-    dnf:
+  - name: Install Apache and PHP (Ubuntu)
+    tags: apache,httpd,centos
+    apt:
       name:
-        - httpd
-        - php
+        - apache2
+        - libapache2-mod-php
       state: latest
-    when: ansible_distribution == "CentOS"
+    when: ansible_distribution == "Ubuntu"
 
 - hosts: db_servers
   become: true
   tasks:
 
-  - name: Install MariaDB package (CentOS)
+  - name: Install MariaDB package (Ubuntu)
+    tags: ubuntu,db,mariadb
     dnf:
-      name: mariadb
+      name: mariadb-server
       state: latest
-    when: ansible_distribution == "CentOS"
+    when: ansible_distribution == "Ubuntu"
 
   - name: Install MariaDB package (Amazon)
+    tags: amazon,db,mariadb
     yum:
       name: mariadb
       state: latest
     when: ansible_distribution == "Amazon"
+
+- hosts: file_servers
+  become: true
+  tasks:
+
+  - name: Install Samba Package
+    tags: samba
+    package:
+      name: samba
+      state: latest
