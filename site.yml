@@ -59,13 +59,29 @@
     when: ansible_distribution == "Amazon"
 
   - name: Install Apache and PHP (Ubuntu)
-    tags: apache,httpd,centos
+    tags: apache,httpd,ubuntu
     apt:
       name:
         - apache2
         - libapache2-mod-php
       state: latest
     when: ansible_distribution == "Ubuntu"
+
+  - name: Change e-mail address for Admin (Amazon)
+    tags: apache,httpd,amazon
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin somebody@somewhere.net
+    when: ansible_distribution == "Amazon"
+    register: httpd
+
+  - name: Restart httpd (Amazon)
+    tags: apache,httpd,amazon
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed
 
   - name: Copy default HTML file for site
     tags: apache,apache2,httpd
