@@ -1,0 +1,14 @@
+- name: Install MariaDB package (Ubuntu)
+  tags: ubuntu,db,mariadb
+  dnf:
+    name: mariadb-server
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install MariaDB package (Amazon)
+  tags: amazon,db,mariadb
+  yum:
+    name: mariadb
+    state: latest
+  when: ansible_distribution == "Amazon"
+

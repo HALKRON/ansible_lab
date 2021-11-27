@@ -18,110 +18,27 @@
     changed_when: false
     when: ansible_distribution == "Ubuntu"
 
-  - name: Add SSH Key for Simone
-    tags: always
-    authorized_key:
-      user: simone
-      key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCLeB4sIJOAmToX1MEOosb+fFtey7WPzJo/d3yDdjl1c45CaZoIjF5jTg1GzXfFUgY2QwjVJ9PxIEc0aB4aMG+sCCVjuYNf8X6xyZxUHoSVrwaeXEIlBBVyCUtRPwQvmfZN87F1P2gIkfCL2eywaL+bai1+3Ier0HIW2+RDO5zO3CgkOyxKuz8MnMvuCU18ougBIpGJVXLZNkCQEnUAT5GqUBAf73w7j5xz7WdOZmYpoE2zUDvQUuTQ1yXioI/Su522W02iiY7F9noG3DK7EeLO+h5sHRJagz/3OZ3QVq4LD7x9m4Sbdh9kepOMj1ml1QZl9yJw6ETTiv2QOEbfy64j"
-
-- hosts: workstations
+- hosts: all
   become: true
-  tasks:
+  roles:
+    - base
 
-  - name: Install unzip
-    tags: workstation,unzip,zip
-    package:
-      name: unzip
+- hosts: all
+  become: true
+  roles:
+    - workstations
 
-  - name: Install terraform
-    tags: workstation,terraform
-    unarchive:
-      src: https://releases.hashicorp.com/terraform/1.0.11/terraform_1.0.11_linux_amd64.zip
-      dest: /usr/local/bin
-      remote_src: yes
-      mode: 0755
-      owner: root
-      group: root
-      
 - hosts: web_servers
   become: true
-  tasks:
-
-  - name: Install Apache and PHP (Amazon)
-    tags: apache,apache2,amazon
-    yum:
-      name:
-        - httpd
-        - php
-      state: latest
-    when: ansible_distribution == "Amazon"
-
-  - name: Spin Up Apache Website (Amazon)
-    tags: apache,apache2,amazon
-    ansible.builtin.systemd:
-      state: started
-      name: httpd
-      enabled: yes
-    when: ansible_distribution == "Amazon"
-
-  - name: Install Apache and PHP (Ubuntu)
-    tags: apache,httpd,ubuntu
-    apt:
-      name:
-        - apache2
-        - libapache2-mod-php
-      state: latest
-    when: ansible_distribution == "Ubuntu"
-
-  - name: Change e-mail address for Admin (Amazon)
-    tags: apache,httpd,amazon
-    lineinfile:
-      path: /etc/httpd/conf/httpd.conf
-      regexp: '^ServerAdmin'
-      line: ServerAdmin somebody@somewhere.net
-    when: ansible_distribution == "Amazon"
-    register: httpd
-
-  - name: Restart httpd (Amazon)
-    tags: apache,httpd,amazon
-    service:
-      name: httpd
-      state: restarted
-    when: httpd.changed
-
-  - name: Copy default HTML file for site
-    tags: apache,apache2,httpd
-    copy:
-      src: default_site.html
-      dest: /var/www/html/index.html
-      owner: root
-      group: root
-      mode: 0644
+  roles:
+    - web_servers
 
 - hosts: db_servers
   become: true
-  tasks:
-
-  - name: Install MariaDB package (Ubuntu)
-    tags: ubuntu,db,mariadb
-    dnf:
-      name: mariadb-server
-      state: latest
-    when: ansible_distribution == "Ubuntu"
-
-  - name: Install MariaDB package (Amazon)
-    tags: amazon,db,mariadb
-    yum:
-      name: mariadb
-      state: latest
-    when: ansible_distribution == "Amazon"
-
+  roles:
+    - db_servers
+ 
 - hosts: file_servers
   become: true
-  tasks:
-
-  - name: Install Samba Package
-    tags: samba
-    package:
-      name: samba
-      state: latest
+  roles:
+    - file_servers
