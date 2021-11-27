@@ -23,7 +23,7 @@
   roles:
     - base
 
-- hosts: all
+- hosts: workstations
   become: true
   roles:
     - workstations

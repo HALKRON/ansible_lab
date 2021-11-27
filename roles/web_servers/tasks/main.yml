@@ -1,9 +1,9 @@
 - name: Install Apache and PHP (Amazon)
   tags: apache,apache2,amazon
-  yum:
+  package:
     name:
-      - httpd
-      - php
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
     state: latest
   when: ansible_distribution == "Amazon"
 
@@ -11,34 +11,17 @@
   tags: apache,apache2,amazon
   ansible.builtin.systemd:
     state: started
-    name: httpd
+    name: "{{ apache_service }}"
     enabled: yes
-  when: ansible_distribution == "Amazon"
-
-- name: Install Apache and PHP (Ubuntu)
-  tags: apache,httpd,ubuntu
-  apt:
-    name:
-      - apache2
-      - libapache2-mod-php
-    state: latest
-  when: ansible_distribution == "Ubuntu"
 
 - name: Change e-mail address for Admin (Amazon)
   tags: apache,httpd,amazon
   lineinfile:
     path: /etc/httpd/conf/httpd.conf
     regexp: '^ServerAdmin'
-    line: ServerAdmin somebody@somewhere.net
+    line: ServerAdmin somebody@somewhere.com
   when: ansible_distribution == "Amazon"
-  register: httpd
-
-- name: Restart httpd (Amazon)
-  tags: apache,httpd,amazon
-  service:
-    name: httpd
-    state: restarted
-  when: httpd.changed
+  notify: restart_apache 
 
 - name: Copy default HTML file for site
   tags: apache,apache2,httpd
